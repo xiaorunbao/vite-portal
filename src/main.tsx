@@ -1,5 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import '@douyinfe/semi-ui-19/lib/es/_base/base.css'
+import './theme.css'
 import './index.css'
 import App from './App.tsx'
 
