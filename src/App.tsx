@@ -1,14 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Button, Card, Input, Toast, Space, Tag, Badge, Avatar, Switch, Slider, Progress, Divider } from '@douyinfe/semi-ui-19'
 import { IconLikeHeart, IconStar, IconTickCircle, IconAlertCircle, IconCrossCircleStroked, IconSetting, IconUser, IconBell, IconMail, IconMoon, IconSun } from '@douyinfe/semi-icons'
+import { useAppStore } from './store'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [inputValue, setInputValue] = useState('')
-  const [switchValue, setSwitchValue] = useState(true)
-  const [sliderValue, setSliderValue] = useState(50)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const { count, inputValue, switchValue, sliderValue, isDarkMode, increment, decrement, resetCount, setInputValue, setSwitchValue, setSliderValue, toggleTheme } = useAppStore()
 
   useEffect(() => {
     const body = document.body
@@ -18,10 +15,6 @@ function App() {
       body.removeAttribute('theme-mode')
     }
   }, [isDarkMode])
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
-  }
 
   const showToast = (type: string) => {
     if (type === 'success') {
@@ -188,7 +181,7 @@ function App() {
           style={{ width: '100%' }}
         >
           <Space>
-            <Button onClick={() => setCount((c) => c - 1)}>-</Button>
+            <Button onClick={decrement}>-</Button>
             <div style={{ 
               padding: '8px 24px', 
               fontSize: '24px', 
@@ -200,8 +193,8 @@ function App() {
             }}>
               {count}
             </div>
-            <Button onClick={() => setCount((c) => c + 1)}>+</Button>
-            <Button type="primary" onClick={() => setCount(0)}>
+            <Button onClick={increment}>+</Button>
+            <Button type="primary" onClick={resetCount}>
               重置
             </Button>
           </Space>
