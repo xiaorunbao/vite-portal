@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, Card, Input, Toast, Space, Tag, Badge, Avatar, Switch, Slider, Progress, Divider } from '@douyinfe/semi-ui-19'
-import { IconLikeHeart, IconStar, IconTickCircle, IconAlertCircle, IconCrossCircleStroked, IconSetting, IconUser, IconBell, IconMail } from '@douyinfe/semi-icons'
+import { IconLikeHeart, IconStar, IconTickCircle, IconAlertCircle, IconCrossCircleStroked, IconSetting, IconUser, IconBell, IconMail, IconMoon, IconSun } from '@douyinfe/semi-icons'
 import './App.css'
 
 function App() {
@@ -8,6 +8,20 @@ function App() {
   const [inputValue, setInputValue] = useState('')
   const [switchValue, setSwitchValue] = useState(true)
   const [sliderValue, setSliderValue] = useState(50)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
+  useEffect(() => {
+    const body = document.body
+    if (isDarkMode) {
+      body.setAttribute('theme-mode', 'dark')
+    } else {
+      body.removeAttribute('theme-mode')
+    }
+  }, [isDarkMode])
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode)
+  }
 
   const showToast = (type: string) => {
     if (type === 'success') {
@@ -23,7 +37,15 @@ function App() {
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '40px', position: 'relative' }}>
+        <Button
+          icon={isDarkMode ? <IconSun /> : <IconMoon />}
+          onClick={toggleTheme}
+          style={{ position: 'absolute', right: 0, top: 0 }}
+          type="tertiary"
+        >
+          {isDarkMode ? '亮色模式' : '暗色模式'}
+        </Button>
         <h1 style={{ fontSize: '36px', marginBottom: '16px', color: 'var(--semi-color-text-0)' }}>
           Semi Design 紫色主题演示
         </h1>

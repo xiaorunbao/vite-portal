@@ -16,3 +16,22 @@
   --semi-color-link-hover: #9634e6;
   --semi-color-link-active: #852ecc;
 }
+
+body[theme-mode='dark'] {
+  --semi-color-primary: #c084fc;
+  --semi-color-primary-hover: #d097fc;
+  --semi-color-primary-active: #e0aafc;
+  --semi-color-primary-light-default: #2d1f3d;
+  --semi-color-primary-light-hover: #3d2a52;
+  --semi-color-primary-light-active: #4d3567;
+  --semi-color-primary-weak-default: #1a1225;
+  --semi-color-primary-weak-hover: #2d1f3d;
+  --semi-color-primary-weak-active: #3d2a52;
+
+  --semi-color-success: #4caf50;
+  --semi-color-warning: #ff9800;
+  --semi-color-danger: #f44336;
+  --semi-color-link: #c084fc;
+  --semi-color-link-hover: #d097fc;
+  --semi-color-link-active: #e0aafc;
+}
