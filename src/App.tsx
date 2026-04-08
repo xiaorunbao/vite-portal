@@ -1,11 +1,20 @@
-import { useEffect } from 'react'
-import { Button, Card, Input, Toast, Space, Tag, Badge, Avatar, Switch, Slider, Progress, Divider } from '@douyinfe/semi-ui-19'
-import { IconLikeHeart, IconStar, IconTickCircle, IconAlertCircle, IconCrossCircleStroked, IconSetting, IconUser, IconBell, IconMail, IconMoon, IconSun } from '@douyinfe/semi-icons'
+import { useState, useEffect } from 'react'
+import { Button, Card, Input, TextArea, Toast, Space, Tag, Badge, Avatar, Switch, Slider, Progress, Divider, Table, Spin, Empty } from '@douyinfe/semi-ui-19'
+import { IconLikeHeart, IconStar, IconTickCircle, IconAlertCircle, IconCrossCircleStroked, IconSetting, IconUser, IconBell, IconMail, IconMoon, IconSun, IconRefresh, IconDelete } from '@douyinfe/semi-icons'
 import { useAppStore } from './store'
+import { useUsers, usePosts, useCreatePost, useDeletePost } from './hooks/use-api'
 import './App.css'
 
 function App() {
   const { count, inputValue, switchValue, sliderValue, isDarkMode, increment, decrement, resetCount, setInputValue, setSwitchValue, setSliderValue, toggleTheme } = useAppStore()
+
+  const { data: users, isLoading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers()
+  const { data: posts, isLoading: postsLoading, error: postsError, refetch: refetchPosts } = usePosts()
+  const createPost = useCreatePost()
+  const deletePost = useDeletePost()
+
+  const [newPostTitle, setNewPostTitle] = useState('')
+  const [newPostContent, setNewPostContent] = useState('')
 
   useEffect(() => {
     const body = document.body
@@ -15,6 +24,29 @@ function App() {
       body.removeAttribute('theme-mode')
     }
   }, [isDarkMode])
+
+  const handleCreatePost = () => {
+    if (newPostTitle.trim() && newPostContent.trim()) {
+      createPost.mutate({
+        title: newPostTitle,
+        content: newPostContent,
+      }, {
+        onSuccess: () => {
+          Toast.success({ content: '文章创建成功！' })
+          setNewPostTitle('')
+          setNewPostContent('')
+        },
+      })
+    }
+  }
+
+  const handleDeletePost = (id: number) => {
+    deletePost.mutate(id, {
+      onSuccess: () => {
+        Toast.success({ content: '文章删除成功！' })
+      },
+    })
+  }
 
   const showToast = (type: string) => {
     if (type === 'success') {
@@ -197,6 +229,169 @@ function App() {
             <Button type="primary" onClick={resetCount}>
               重置
             </Button>
+          </Space>
+        </Card>
+
+        <Card
+          title="React Query - 用户列表"
+          headerExtraContent={
+            <Space>
+              <Tag color="blue">Users</Tag>
+              <Button 
+                icon={<IconRefresh />} 
+                size="small" 
+                onClick={() => refetchUsers()}
+                loading={usersLoading}
+              >
+                刷新
+              </Button>
+            </Space>
+          }
+          style={{ width: '100%' }}
+        >
+          {usersLoading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <Spin size="large" />
+            </div>
+          ) : usersError ? (
+            <Empty
+              title="加载失败"
+              description="无法获取用户数据"
+              imageStyle={{ height: 150 }}
+            />
+          ) : (
+            <Table
+              dataSource={users || []}
+              columns={[
+                {
+                  title: 'ID',
+                  dataIndex: 'id',
+                  key: 'id',
+                  width: 80,
+                },
+                {
+                  title: '头像',
+                  dataIndex: 'avatar',
+                  key: 'avatar',
+                  render: (text) => <Avatar color="violet">{text}</Avatar>,
+                },
+                {
+                  title: '姓名',
+                  dataIndex: 'name',
+                  key: 'name',
+                },
+                {
+                  title: '邮箱',
+                  dataIndex: 'email',
+                  key: 'email',
+                },
+              ]}
+              pagination={false}
+              size="small"
+            />
+          )}
+        </Card>
+
+        <Card
+          title="React Query - 文章管理"
+          headerExtraContent={
+            <Space>
+              <Tag color="purple">Posts</Tag>
+              <Button 
+                icon={<IconRefresh />} 
+                size="small" 
+                onClick={() => refetchPosts()}
+                loading={postsLoading}
+              >
+                刷新
+              </Button>
+            </Space>
+          }
+          style={{ width: '100%' }}
+        >
+          <Space vertical spacing="medium" style={{ width: '100%' }}>
+            <Card
+              title="创建文章"
+              style={{ width: '100%' }}
+              bodyStyle={{ padding: '16px' }}
+            >
+              <Space vertical spacing="medium" style={{ width: '100%' }}>
+                <Input
+                  placeholder="文章标题"
+                  value={newPostTitle}
+                  onChange={setNewPostTitle}
+                  style={{ width: '100%' }}
+                />
+                <TextArea
+                  placeholder="文章内容"
+                  value={newPostContent}
+                  onChange={setNewPostContent}
+                  rows={4}
+                  style={{ width: '100%' }}
+                />
+                <Button
+                  type="primary"
+                  onClick={handleCreatePost}
+                  loading={createPost.isPending}
+                  block
+                >
+                  创建文章
+                </Button>
+              </Space>
+            </Card>
+
+            {postsLoading ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <Spin size="large" />
+              </div>
+            ) : postsError ? (
+              <Empty
+                title="加载失败"
+                description="无法获取文章数据"
+                imageStyle={{ height: 150 }}
+              />
+            ) : (
+              <Table
+                dataSource={posts || []}
+                columns={[
+                  {
+                    title: 'ID',
+                    dataIndex: 'id',
+                    key: 'id',
+                    width: 80,
+                  },
+                  {
+                    title: '标题',
+                    dataIndex: 'title',
+                    key: 'title',
+                  },
+                  {
+                    title: '内容',
+                    dataIndex: 'content',
+                    key: 'content',
+                    ellipsis: true,
+                  },
+                  {
+                    title: '操作',
+                    key: 'action',
+                    width: 100,
+                    render: (_, record) => (
+                      <Button
+                        type="danger"
+                        size="small"
+                        icon={<IconDelete />}
+                        onClick={() => handleDeletePost(record.id)}
+                        loading={deletePost.isPending}
+                      >
+                        删除
+                      </Button>
+                    ),
+                  },
+                ]}
+                pagination={false}
+                size="small"
+              />
+            )}
           </Space>
         </Card>
       </Space>
