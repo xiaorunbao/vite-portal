@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Layout, Spin, Avatar, Button, Nav, Dropdown, SideSheet } from '@douyinfe/semi-ui-19'
-import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconMenu } from '@douyinfe/semi-icons'
+import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconMenu, IconMoon, IconSun } from '@douyinfe/semi-icons'
 import { PortalTabs } from './components/PortalTabs'
 import { PortalContent } from './components/PortalContent'
 import { usePortalStore } from './store/portal'
@@ -17,6 +17,7 @@ function App() {
   const [isLargeScreen, setIsLargeScreen] = useState(false)
   const [is2KScreen, setIs2KScreen] = useState(false)
   const [drawerVisible, setDrawerVisible] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -175,6 +176,17 @@ function App() {
     return 'large'
   }
 
+  const toggleTheme = () => {
+    const body = document.body
+    if (body.hasAttribute('theme-mode')) {
+      body.removeAttribute('theme-mode')
+      setIsDarkMode(false)
+    } else {
+      body.setAttribute('theme-mode', 'dark')
+      setIsDarkMode(true)
+    }
+  }
+
   if (isLoading) {
     return (
       <div
@@ -214,7 +226,7 @@ function App() {
           ) : (
             <Nav
               mode="horizontal"
-              defaultSelectedKeys={['Home']}
+              defaultSelectedKeys={['1']}
               style={{ flex: 1, backgroundColor: 'transparent' }}
             >
               <Nav.Header>
@@ -227,17 +239,26 @@ function App() {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Button
             theme="borderless"
-            icon={<IconBell />}
+            type="primary"
+            icon={isDarkMode ? <IconSun /> : <IconMoon />}
+            onClick={toggleTheme}
             style={{
-              color: 'var(--semi-color-text-2)',
               marginRight: getButtonMargin(),
             }}
           />
           <Button
             theme="borderless"
+            type="primary"
+            icon={<IconBell />}
+            style={{
+              marginRight: getButtonMargin(),
+            }}
+          />
+          <Button
+            theme="borderless"
+            type="primary"
             icon={<IconHelpCircle />}
             style={{
-              color: 'var(--semi-color-text-2)',
               marginRight: getButtonMargin(),
             }}
           />

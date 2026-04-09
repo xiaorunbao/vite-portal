@@ -16,6 +16,7 @@
   "dependencies": {
     "@douyinfe/semi-icons": "^2.93.0",
     "@douyinfe/semi-ui-19": "^2.93.0",
+    "@semi-bot/semi-theme-rainbow": "^1.0.4",
     "@tanstack/react-query": "^5.96.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -36,6 +37,7 @@
     "globals": "^17.4.0",
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
+    "sass": "^1.99.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1"
