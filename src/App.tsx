@@ -136,15 +136,15 @@ function App() {
 
   const getContentPadding = () => {
     if (isMobile) return '12px'
-    if (is2KScreen) return '40px'
-    if (isLargeScreen) return '32px'
-    return '24px'
+    if (is2KScreen) return '32px'
+    if (isLargeScreen) return '24px'
+    return '16px'
   }
 
   const getFooterPadding = () => {
     if (isMobile) return '12px 16px'
     if (is2KScreen) return '28px'
-    if (isLargeScreen) return '24px'
+    if (isLargeScreen) return '16px'
     return '20px'
   }
 
@@ -236,7 +236,7 @@ function App() {
             </Nav>
           )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center',paddingRight: 16 }}>
           <Button
             theme="borderless"
             type="primary"
@@ -281,10 +281,11 @@ function App() {
           flexDirection: 'column',
           overflow: 'hidden',
           flex: 1,
+          paddingTop: 0
         }}
       >
         <PortalTabs />
-        <div style={{ flex: 1, overflow: 'hidden', marginTop: isMobile ? '12px' : is2KScreen ? '24px' : isLargeScreen ? '20px' : '16px' }}>
+        <div style={{ flex: 1, overflow: 'hidden', marginTop: isMobile ? '12px' : is2KScreen ? '16px' : isLargeScreen ? '20px' : '16px' }}>
           <PortalContent />
         </div>
       </Content>
@@ -312,7 +313,7 @@ function App() {
           </span>
         </span>
         <span>
-          <span style={{ marginRight: isMobile ? '12px' : is2KScreen ? '32px' : isLargeScreen ? '28px' : '24px' }}>平台客服</span>
+          <span style={{ marginRight: isMobile ? '12px' : is2KScreen ? '32px' : isLargeScreen ? '28px' : '16px' }}>平台客服</span>
           <span>反馈建议</span>
         </span>
       </Footer>

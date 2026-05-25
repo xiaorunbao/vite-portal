@@ -76,14 +76,17 @@ export const PortalTabs = () => {
 
   const tabList = tabs.map((tab) => ({
     itemKey: tab.id,
-    tab: tab.name,
-    closable: tab.closable,
-    icon: tab.closable ? (
-      <IconClose
-        style={{ fontSize: getIconSize() }}
-        onClick={(e) => handleTabClose(e, tab.id)}
-      />
-    ) : undefined,
+    tab: (
+      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {tab.name}
+        {tab.closable && (
+          <IconClose
+            style={{ fontSize: getIconSize(), cursor: 'pointer' }}
+            onClick={(e) => handleTabClose(e, tab.id)}
+          />
+        )}
+      </span>
+    ),
   }))
 
   return (
