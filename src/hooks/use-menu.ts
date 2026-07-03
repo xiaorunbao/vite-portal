@@ -93,7 +93,7 @@ export const mockMenuData: MenuItem[] = [
   {
     id: '4',
     name: '数据统计',
-    url: 'https://example.com/statistics',
+    url: 'http://localhost:3000/',
     icon: 'IconChart',
     level: 1,
   },

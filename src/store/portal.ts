@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useEffect, useState } from 'react'
 
 export interface MenuItem {
   id: string
@@ -47,6 +48,8 @@ export const usePortalStore = create<PortalState>()(
         }),
       removeTab: (id) =>
         set((state) => {
+          const target = state.tabs.find((tab) => tab.id === id)
+          if (target && !target.closable) return state
           const newTabs = state.tabs.filter((tab) => tab.id !== id)
           const newActiveTabId = state.activeTabId === id ? (newTabs.length > 0 ? newTabs[newTabs.length - 1].id : null) : state.activeTabId
           return { tabs: newTabs, activeTabId: newActiveTabId }
@@ -54,10 +57,14 @@ export const usePortalStore = create<PortalState>()(
       setActiveTab: (id) => set({ activeTabId: id }),
       closeOtherTabs: (id) =>
         set((state) => ({
-          tabs: state.tabs.filter((tab) => tab.id === id),
+          tabs: state.tabs.filter((tab) => tab.id === id || !tab.closable),
           activeTabId: id,
         })),
-      closeAllTabs: () => set({ tabs: [], activeTabId: null }),
+      closeAllTabs: () =>
+        set((state) => ({
+          tabs: state.tabs.filter((tab) => !tab.closable),
+          activeTabId: state.tabs.find((tab) => !tab.closable)?.id ?? null,
+        })),
     }),
     {
       name: 'portal-storage',
@@ -65,3 +72,21 @@ export const usePortalStore = create<PortalState>()(
     }
   )
 )
+
+export const useHydrated = () => {
+  const [hydrated, setHydrated] = useState(() => usePortalStore.persist.hasHydrated())
+
+  useEffect(() => {
+    if (usePortalStore.persist.hasHydrated()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setHydrated(true)
+      return
+    }
+    const unsub = usePortalStore.persist.onFinishHydration(() => {
+      setHydrated(true)
+    })
+    return unsub
+  }, [])
+
+  return hydrated
+}

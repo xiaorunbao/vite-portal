@@ -1,23 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Layout, Spin, Avatar, Button, Nav, Dropdown, SideSheet } from '@douyinfe/semi-ui-19'
 import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconMenu, IconMoon, IconSun } from '@douyinfe/semi-icons'
 import { PortalTabs } from './components/PortalTabs'
 import { PortalContent } from './components/PortalContent'
-import { usePortalStore } from './store/portal'
+import { usePortalStore, useHydrated } from './store/portal'
 import { useMockMenuData } from './hooks/use-menu'
+import { usePortalMessage } from './hooks/use-portal-message'
 import type { MenuItem } from './store/portal'
 import './App.css'
 
 const { Header, Content, Footer } = Layout
 
 function App() {
-  const { setMenuData, addTab, tabs } = usePortalStore()
+  const { setMenuData, addTab, setActiveTab, tabs, activeTabId } = usePortalStore()
+  const hydrated = useHydrated()
   const { data: menuData, isLoading } = useMockMenuData()
   const [isMobile, setIsMobile] = useState(false)
   const [isLargeScreen, setIsLargeScreen] = useState(false)
   const [is2KScreen, setIs2KScreen] = useState(false)
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+
+  usePortalMessage()
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,19 +45,28 @@ function App() {
     }
   }, [menuData, setMenuData])
 
+  const initializedRef = useRef(false)
+
   useEffect(() => {
-    if (menuData && menuData.length > 0 && tabs.length === 0) {
+    if (!initializedRef.current && hydrated && menuData && menuData.length > 0) {
       const homePage = menuData.find((item) => item.id === '1')
       if (homePage && homePage.url) {
-        addTab({
+        const homeTab = {
           id: homePage.id,
           name: homePage.name,
           url: homePage.url,
           closable: false,
-        })
+        }
+
+        if (tabs.length === 0 || !tabs.some(tab => tab.id === '1')) {
+          addTab(homeTab)
+        } else if (activeTabId === null || !tabs.some(tab => tab.id === activeTabId)) {
+          setActiveTab(tabs[0].id)
+        }
       }
+      initializedRef.current = true
     }
-  }, [menuData, tabs, addTab])
+  }, [menuData, tabs, addTab, setActiveTab, hydrated, activeTabId])
 
   const handleMenuClick = (item: MenuItem) => {
     addTab({
@@ -226,7 +239,7 @@ function App() {
           ) : (
             <Nav
               mode="horizontal"
-              defaultSelectedKeys={['1']}
+              selectedKeys={activeTabId ? [activeTabId] : ['1']}
               style={{ flex: 1, backgroundColor: 'transparent' }}
             >
               <Nav.Header>
